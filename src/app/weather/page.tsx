@@ -130,12 +130,9 @@ export default function WeatherPage() {
                 const d = new Date(now);
                 d.setDate(d.getDate() + i);
                 const dateStr = d.toISOString().slice(0, 10);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const slots = fc?.list?.filter((s: any) => s.dt_txt?.startsWith(dateStr)) ?? [];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const slot = slots.find((s: any) => s.dt_txt?.includes("12:00") || s.dt_txt?.includes("15:00")) ?? slots[0];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const temps = slots.map((s: any) => s.main?.temp ?? current.temp);
+                const slots = (fc?.list || []).filter((s: { dt_txt?: string }) => s.dt_txt?.startsWith(dateStr));
+                const slot = slots.find((s: { dt_txt?: string }) => s.dt_txt?.includes("12:00") || s.dt_txt?.includes("15:00")) || slots[0];
+                const temps = slots.map((s: { main?: { temp: number } }) => s.main?.temp ?? current.temp);
                 return {
                     date: d.toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
                     day: i === 0 ? "Today" : i === 1 ? "Tomorrow" : days[d.getDay()],
@@ -299,7 +296,7 @@ export default function WeatherPage() {
                     {advisory.length > 0 && (
                         <div className="w-full max-w-6xl space-y-3">
                             <h2 className="text-white font-black text-lg flex items-center gap-2">
-                                <span className="text-yellow-400">⚠️</span> Today's Farm Advisory
+                                <span className="text-yellow-400">⚠️</span> Today&apos;s Farm Advisory
                             </h2>
                             {advisory.map((a, i) => (
                                 <div key={i} className={`rounded-xl p-4 border flex items-start gap-3 ${ADVISORY_COLORS[a.type]}`}>

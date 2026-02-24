@@ -281,7 +281,7 @@ export default function MarketPricesPage() {
                                             <p className="text-green-300 text-sm flex items-center gap-1"><MapPin size={11} /> {p.mandi}</p>
                                         </div>
                                         <div>
-                                            <p className="text-green-800 text-xs font-bold uppercase tracking-widest mb-1">Today's Change</p>
+                                            <p className="text-green-800 text-xs font-bold uppercase tracking-widest mb-1">Today&apos;s Change</p>
                                             <p className={`text-sm font-black ${p.positive ? "text-green-400" : "text-red-400"}`}>{p.changeFormatted} ({p.changePct})</p>
                                         </div>
                                         {p.msp && (

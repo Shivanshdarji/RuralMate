@@ -188,7 +188,7 @@ export default function PestDetectorPage() {
                     {!result && !loading && (
                         <div className="h-64 flex flex-col items-center justify-center text-center gap-4">
                             <span className="text-6xl opacity-20">🔬</span>
-                            <p className="text-green-800 font-medium">Upload a crop photo and click<br /><span className="text-green-600">"Detect Problem"</span> to get AI analysis</p>
+                            <p className="text-green-800 font-medium">Upload a crop photo and click<br /><span className="text-green-600">&quot;Detect Problem&quot;</span> to get AI analysis</p>
                         </div>
                     )}
 

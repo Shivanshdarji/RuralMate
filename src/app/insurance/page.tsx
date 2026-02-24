@@ -220,7 +220,7 @@ export default function InsurancePage() {
                                     <div className="border-t border-blue-900/30 p-5 space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="bg-green-900/10 rounded-xl p-4 border border-green-900/20">
-                                                <h4 className="text-green-400 font-black text-xs uppercase tracking-widest mb-2">✅ What's Covered</h4>
+                                                <h4 className="text-green-400 font-black text-xs uppercase tracking-widest mb-2">✅ What&apos;s Covered</h4>
                                                 <ul className="space-y-1">
                                                     {s.covers.map(c => <li key={c} className="text-green-200 text-xs flex items-start gap-2"><CheckCircle2 size={10} className="text-green-500 mt-0.5 flex-shrink-0" />{c}</li>)}
                                                 </ul>
@@ -276,7 +276,7 @@ export default function InsurancePage() {
                                         <p className="text-blue-200 text-sm">{s.sum}</p>
                                     </div>
                                     <div className="glass-card p-4 bg-yellow-900/10 border-yellow-900/20">
-                                        <p className="text-yellow-700 text-xs font-bold uppercase tracking-widest mb-2">What's Covered</p>
+                                        <p className="text-yellow-700 text-xs font-bold uppercase tracking-widest mb-2">What&apos;s Covered</p>
                                         <ul className="space-y-1">{s.covers.map(c => <li key={c} className="text-yellow-200 text-xs flex items-start gap-1"><CheckCircle2 size={9} className="mt-0.5 flex-shrink-0 text-green-500" />{c}</li>)}</ul>
                                     </div>
                                     <div className="glass-card p-4 bg-purple-900/10 border-purple-900/20">
@@ -410,7 +410,7 @@ export default function InsurancePage() {
                 <AlertCircle size={20} className="text-indigo-400 flex-shrink-0 mt-0.5" />
                 <div>
                     <p className="text-indigo-300 font-bold text-sm mb-1">Always buy insurance BEFORE disaster strikes</p>
-                    <p className="text-indigo-600 text-xs">Claims cannot be made if you didn't insure before the event. File claims within 72 hours to avoid rejection. Keep all documents safe.</p>
+                    <p className="text-indigo-600 text-xs">Claims cannot be made if you didn&apos;t insure before the event. File claims within 72 hours to avoid rejection. Keep all documents safe.</p>
                 </div>
             </div>
         </div>

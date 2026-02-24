@@ -569,7 +569,7 @@ export default function FieldMapPage() {
                             {fields.length === 0 && (
                                 <div className="text-center py-10 text-green-800">
                                     <Map size={32} className="mx-auto mb-3 opacity-30" />
-                                    <p className="text-sm">No fields yet. Click "Draw Field" to add one.</p>
+                                    <p className="text-sm">No fields yet. Click &quot;Draw Field&quot; to add one.</p>
                                 </div>
                             )}
                         </div>

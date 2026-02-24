@@ -336,7 +336,7 @@ export default function LivestockPage() {
                     <div className="space-y-4">
                         <div className="glass-card p-4 bg-green-900/10 border-green-900/20 flex items-center gap-3">
                             <AlertCircle size={18} className="text-green-400 flex-shrink-0" />
-                            <p className="text-green-300 text-sm">These schemes can give you ₹50,000 to ₹7 lakh in subsidies. Don't miss them!</p>
+                            <p className="text-green-300 text-sm">These schemes can give you ₹50,000 to ₹7 lakh in subsidies. Don&apos;t miss them!</p>
                         </div>
                         {LIVESTOCK_SCHEMES.map(s => (
                             <div key={s.name} className="glass-card p-5 space-y-3 hover:border-amber-800/20 border border-transparent transition">

@@ -94,7 +94,7 @@ function StepAuth({ onNext }: { onNext: (phone: string, name: string) => void })
       </button>
 
       <p className="text-green-900 text-[11px] text-center leading-relaxed">
-        New farmer? You'll set up your farm profile in the next step.
+        New farmer? You&apos;ll set up your farm profile in the next step.
       </p>
     </form>
   );
@@ -139,7 +139,7 @@ function StepFarm({ name, phone, callbackUrl }: { name: string; phone: string; c
         <CheckCircle2 size={18} className="text-green-500 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-white font-black text-sm">Welcome, {name}! 🎉</p>
-          <p className="text-green-700 text-xs mt-0.5">You're logged in. Tell us about your farm for personalised advice.</p>
+          <p className="text-green-700 text-xs mt-0.5">You&apos;re logged in. Tell us about your farm for personalised advice.</p>
         </div>
       </div>
 
