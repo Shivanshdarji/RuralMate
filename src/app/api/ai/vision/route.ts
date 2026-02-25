@@ -29,10 +29,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "No image provided" }, { status: 400 });
         }
 
-        const key = process.env.GEMINI_API_KEY;
+        const key = process.env.OPENAI_API_KEY;
 
-        // Only use mock if key is missing or is the default placeholder (real Gemini keys start with 'AIza')
-        if (!key || key.startsWith("your_") || key === "your_gemini_api_key_here") {
+        // Use mock if key is missing or is a placeholder
+        if (!key || key.startsWith("your_") || key === "your_openai_api_key_here") {
             const mockResult = {
                 pest: "Leaf Blight (Suspected)",
                 confidence: "72%",
@@ -47,40 +47,44 @@ export async function POST(req: Request) {
                 },
                 urgency: "Act within 3-5 days to prevent spread. Remove heavily infected leaves immediately.",
                 helpline: "Kisan Call Center: 1800-180-1551",
-                note: "⚠️ Add your GEMINI_API_KEY to .env.local for real image analysis."
+                note: "⚠️ Add your OPENAI_API_KEY to .env.local for real image analysis."
             };
             return NextResponse.json({ result: mockResult, usedMock: true });
         }
 
-        const { GoogleGenerativeAI } = await import("@google/generative-ai");
-        const genAI = new GoogleGenerativeAI(key);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const { default: OpenAI } = await import("openai");
+        const openai = new OpenAI({ apiKey: key });
 
-        const result = await model.generateContent([
-            VISION_PROMPT,
-            {
-                inlineData: {
-                    mimeType,
-                    data: imageBase64,
+        const dataUrl = `data:${mimeType};base64,${imageBase64}`;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            max_tokens: 1000,
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        { type: "text", text: VISION_PROMPT },
+                        { type: "image_url", image_url: { url: dataUrl, detail: "high" } },
+                    ],
                 },
-            },
-        ]);
+            ],
+        });
 
-        const text = result.response.text();
+        const text = response.choices[0]?.message?.content ?? "";
 
         // Parse JSON from the response
         const jsonMatch = text.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
-            throw new Error("No JSON in response");
+            throw new Error("No JSON in response: " + text.slice(0, 200));
         }
 
         const parsed = JSON.parse(jsonMatch[0]);
         return NextResponse.json({ result: parsed, usedMock: false });
 
     } catch (error: any) {
-        console.error("Vision API error:", error);
+        console.error("Vision API error:", error?.message ?? error);
 
-        // Smart fallback on error
         return NextResponse.json({
             result: {
                 pest: "Analysis Incomplete",
@@ -95,10 +99,11 @@ export async function POST(req: Request) {
                     preventive: "Maintain crop hygiene and regular inspection"
                 },
                 urgency: "Please describe symptoms to KisanAI chat for immediate help.",
-                helpline: "Kisan Call Center: 1800-180-1551"
+                helpline: "Kisan Call Center: 1800-180-1551",
+                note: `Error: ${error?.message ?? "Unknown error"}`
             },
             usedMock: true,
-            error: error.message
+            error: error?.message
         });
     }
 }

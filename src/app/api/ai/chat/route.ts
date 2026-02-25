@@ -37,7 +37,7 @@ async function tryGemini(message: string, history: any[]) {
 
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const chat = model.startChat({
         history: history.map((m: any) => ({

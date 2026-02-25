@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -201,8 +201,8 @@ function StepFarm({ name, phone, callbackUrl }: { name: string; phone: string; c
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-export default function LoginPage() {
+// ─── Inner page (uses useSearchParams — must be inside Suspense) ──────────────
+function LoginContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [step, setStep] = useState<"auth" | "farm">("auth");
@@ -338,5 +338,18 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Main Page (Suspense wrapper required for useSearchParams) ─────────────────
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#060f08] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-green-900 border-t-green-500 animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
