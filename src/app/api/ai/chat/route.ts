@@ -30,77 +30,46 @@ National helplines to mention when relevant:
 - Medical Emergency: 108
 - PM-KISAN Helpline: 155261`;
 
-// ---------- Gemini ----------
-async function tryGemini(message: string, history: any[]) {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key || key === "your_gemini_api_key_here") return null;
-
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-    const chat = model.startChat({
-        history: history.map((m: any) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-        })),
-        generationConfig: { maxOutputTokens: 800, temperature: 0.7 },
-        systemInstruction: SYSTEM_PROMPT,
-    });
-
-    const result = await chat.sendMessage(message);
-    return result.response.text();
-}
-
-// ---------- OpenAI ----------
-async function tryOpenAI(message: string, history: any[]) {
-    const key = process.env.OPENAI_API_KEY;
-    if (!key || key === "your_openai_api_key_here") return null;
-
-    const { default: OpenAI } = await import("openai");
-    const openai = new OpenAI({ apiKey: key });
-
-    const messages: any[] = [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...history.map((m: any) => ({
-            role: m.role === "assistant" ? "assistant" : "user",
-            content: m.content,
-        })),
-        { role: "user", content: message },
-    ];
-
-    const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages,
-        max_tokens: 800,
-        temperature: 0.7,
-    });
-
-    return completion.choices[0]?.message?.content || null;
-}
-
-// ---------- Handler ----------
 export async function POST(req: Request) {
     try {
         const { message, history = [] } = await req.json();
 
-        // Try Gemini first, then OpenAI as fallback
-        let reply = await tryGemini(message, history).catch(() => null);
-        if (!reply) {
-            reply = await tryOpenAI(message, history).catch(() => null);
-        }
+        const key = process.env.OPENAI_API_KEY;
 
-        if (!reply) {
+        if (!key || key.startsWith("your_") || key === "your_openai_api_key_here") {
             return NextResponse.json({
-                reply: "🤖 No AI API key configured. Please add either GEMINI_API_KEY or OPENAI_API_KEY to your .env.local file.\n\nFor immediate help call:\n📞 Kisan Call Center: 1800-180-1551",
+                reply: "🤖 No AI API key configured. Please add OPENAI_API_KEY to your environment variables.\n\nFor immediate help call:\n📞 Kisan Call Center: 1800-180-1551",
             });
         }
 
+        const { default: OpenAI } = await import("openai");
+        const openai = new OpenAI({ apiKey: key });
+
+        const messages: { role: "system" | "user" | "assistant"; content: string }[] = [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...history.map((m: any) => ({
+                role: m.role === "assistant" ? "assistant" as const : "user" as const,
+                content: m.content,
+            })),
+            { role: "user", content: message },
+        ];
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages,
+            max_tokens: 800,
+            temperature: 0.7,
+        });
+
+        const reply = completion.choices[0]?.message?.content;
+        if (!reply) throw new Error("Empty response from OpenAI");
+
         return NextResponse.json({ reply });
+
     } catch (error: any) {
-        console.error("AI Chat error:", error);
+        console.error("AI Chat error:", error?.message ?? error);
         return NextResponse.json({
-            reply: "🤖 AI service encountered an error. Please check your API keys in .env.local.\n\nFor immediate help call:\n📞 Kisan Call Center: 1800-180-1551",
+            reply: "🤖 AI service encountered an error. Please check your OPENAI_API_KEY.\n\nFor immediate help call:\n📞 Kisan Call Center: 1800-180-1551",
         });
     }
 }
